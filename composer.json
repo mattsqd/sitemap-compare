@@ -1,0 +1,13 @@
+{
+    "name": "matt/compare",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Matt Poole",
+            "email": "mattsqd@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "consolidation/robo": "^5"
+    }
+}
