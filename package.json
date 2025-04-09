@@ -12,29 +12,14 @@
     "npm-run-all": "^4.1.5"
   },
   "scripts": {
-    "compare-fresh": "npm-run-all -s -c compare-baseline-against-hugo update-baseline-images compare-baseline-against-drupal http",
-    "compare": "npm-run-all -s -c compare-baseline-against-drupal http",
-    "compare-baseline-against-hugo": "DISPLAY='' NODE_OPTIONS='' cypress run --config baseUrl=$npm_package_config_hugo_url --spec=$spec",
+    "get-baseline": "npm-run-all -s -c clear-baseline-images run-compare",
+    "compare": "npm-run-all -s -c run-compare http",
+    "run-spec": "DISPLAY='' NODE_OPTIONS='' cypress run --spec=$spec",
     "update-baseline-images": "npx cypress-image-diff -u",
-    "compare-baseline-against-drupal": "DISPLAY='' NODE_OPTIONS='' cypress run --config baseUrl=$npm_package_config_drupal_url --spec=$spec",
     "http": "npx http-server . -o cypress-image-diff-html-report/cypress-image-diff-html-report.html",
-    "authors-fresh": "spec=cypress/e2e/*authors*.cy.js npm run compare-fresh",
-    "authors": "spec=cypress/e2e/*authors*.cy.js npm run compare",
-    "basic-pages-fresh": "spec=cypress/e2e/*basic_pages*.cy.js npm run compare-fresh",
-    "basic-pages": "spec=cypress/e2e/*basic_pages*.cy.js npm run compare",
-    "communities-fresh": "spec=cypress/e2e/*communities*.cy.js npm run compare-fresh",
-    "communities": "spec=cypress/e2e/*communities*.cy.js npm run compare",
-    "events-fresh": "spec=cypress/e2e/*events*.cy.js npm run compare-fresh",
-    "events": "spec=cypress/e2e/*events*.cy.js npm run compare",
-    "guides-fresh": "spec=cypress/e2e/*guides*.cy.js npm run compare-fresh",
-    "guides": "spec=cypress/e2e/*guides*.cy.js npm run compare",
-    "landing-pages-fresh": "spec=cypress/e2e/*landing_pages*.cy.js npm run compare-fresh",
-    "landing-pages": "spec=cypress/e2e/*landing_pages*.cy.js npm run compare",
-    "news-fresh": "spec=cypress/e2e/*news*.cy.js npm run compare-fresh",
-    "news": "spec=cypress/e2e/*news*.cy.js npm run compare",
-    "resources-fresh": "spec=cypress/e2e/*resources*.cy.js npm run compare-fresh",
-    "resources": "spec=cypress/e2e/*resources*.cy.js npm run compare",
-    "topics-fresh": "spec=cypress/e2e/*topics*.cy.js npm run compare-fresh",
-    "topics": "spec=cypress/e2e/*topics*.cy.js npm run compare"
+    "run-compare": "spec=cypress/e2e/compare.cy.js npm run run-spec",
+    "clear": "rm cypress-image-diff-screenshots/baseline/* cypress-image-diff-screenshots/comparison/* cypress-image-diff-screenshots/diff/* cypress-image-diff-html-report/*",
+    "generate-report": "cypress-image-diff-html-report generate",
+    "display-report": "cypress-image-diff-html-report start"
   }
 }

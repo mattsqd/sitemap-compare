@@ -3,5 +3,6 @@
 node_modules
 
 cypress-image-diff-*
-
+cypress/fixtures/urls.json
 cypress/screenshots
+/vendor/
