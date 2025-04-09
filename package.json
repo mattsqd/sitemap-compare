@@ -1,5 +1,5 @@
 {
-  "name": "digital-gov-cypress-tests",
+  "name": "sitemap-compare",
   "config": {
     "hugo_url": "http://localhost:1313",
     "drupal_url": "http://digitalgov.lndo.site"
