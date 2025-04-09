@@ -61,6 +61,10 @@ describe(`Comparing sitemap URLs`, () => {
                     cy.compareSnapshot(compareOptions);
                 }
             });
+            after(() => {
+                // This causes an extra JSON report to be created if run via CLI.
+                cy.task('generateJsonReport');
+            })
         });
     });
 });
