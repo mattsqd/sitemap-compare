@@ -50,7 +50,7 @@ class RoboFile extends Tasks
             return $urls;
         };
         $urls = array_unique($get_urls($get_xml($url), $url));
-        $file = 'urls.json';
+        $file = 'cypress/fixtures/urls.json';
         $flags =
             // Makes human readable by indenting and adding new lines.
             JSON_PRETTY_PRINT |
