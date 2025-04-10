@@ -7,3 +7,4 @@ cypress/fixtures/urls.json
 cypress/screenshots
 /vendor/
 cypress/logs/log.txt
+missing-images.txt
