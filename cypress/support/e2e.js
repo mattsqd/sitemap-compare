@@ -16,8 +16,25 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
+// cypress/support/e2e.js
+const logs = [];
+
+const originalLog = Cypress.log;
+
+Cypress.log = function (opts, ...rest) {
+    const log = originalLog.call(this, opts, ...rest);
+
+    if (opts && opts.name !== 'request') {
+        logs.push(`[${opts.name}] ${opts.message}`);
+    }
+
+    return log;
+};
+
+
 after(() => {
     // Generate the HTML version of the cypress-image-diff-html-report.
     // Without this it will just create .json files.
     cy.task('generateReport')
+    cy.task('writeLogs', logs);
 })

@@ -6,3 +6,4 @@ cypress-image-diff-*
 cypress/fixtures/urls.json
 cypress/screenshots
 /vendor/
+cypress/logs/log.txt
