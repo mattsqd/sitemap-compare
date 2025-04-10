@@ -60,7 +60,7 @@ describe(`Comparing sitemap URLs`, () => {
                 // https://cypress.visual-image-diff.dev/getting-started/cy.comparesnapshot-command.
                 // https://cypress.visual-image-diff.dev/getting-started/custom-config-file.
                 let compareOptions = {
-                    testThreshold: 0.13
+                    testThreshold: 0.01
                 }
                 // Everything that can change how the screenshot is taken should be put in this.
                 let changesName = compareOptions;
