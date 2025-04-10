@@ -1,6 +1,10 @@
 const urls = require('../fixtures/urls.json');
 
 describe(`Comparing sitemap URLs`, () => {
+    after(() => {
+        // This causes an extra JSON report to be created if run via CLI.
+        cy.task('generateJsonReport');
+    })
     urls.forEach((url) => {
         const sizes = [
             [1920, 1080],
