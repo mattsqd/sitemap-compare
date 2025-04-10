@@ -17,6 +17,32 @@ describe(`Comparing sitemap URLs`, () => {
                 cy.visit(url);
                 // Wait until the page has loaded.
                 cy.waitUntil(() => cy.window().then(win => win.document.readyState === 'complete'));
+                // Wait until all images have loaded.
+                // https://stackoverflow.com/questions/78216692/how-to-wait-until-all-images-have-loaded-before-running-cypress-test.
+                cy.get('img').each(($img) => {
+                    cy.wrap($img)
+                        .scrollIntoView()
+                        .then(($el) => {
+                            const imgEl = $el[0];
+
+                            // Return a Cypress Promise to control behavior
+                            return new Cypress.Promise((resolve) => {
+                                setTimeout(() => {
+                                    const width = imgEl.naturalWidth;
+
+                                    if (width === 0) {
+                                        Cypress.log({
+                                            name: 'Image Load Warning',
+                                            message: `Image did not load: ${imgEl.src} on ${url}`,
+                                            consoleProps: () => ({ width }),
+                                        });
+                                    }
+
+                                    resolve(); // continue test no matter what
+                                }, 500); // Wait .5 second max
+                            });
+                        });
+                });
                 // Hide things that should not show.
                 cy.get('.cookiesjsr-btn.important.allowAll').click();
                 // Find the element you want to hide
