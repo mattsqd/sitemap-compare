@@ -1,75 +1,90 @@
-# Digital.gov Drupal Cypress Tests
+# Sitemap Compare
 
-The purpose of this package is to compare the current Hugo site against the new Drupal site. It uses visual testing to
-compare screenshots of the same URL from one site to the other. It creates a report that allows you to see the
-baseline Hugo site against the comparison Drupal site as well as the difference between the images.
+The purpose of this package is to run [visual regression testing](https://www.npmjs.com/package/cypress-image-diff-js/v/1.22.0) on a site based a list or URLs to use.
 
-## What is being tested?
-
-Right now the only tests available are to test the 'real' content that we created in Drupal, which is only a small
- subset of content, against the Hugo site. Eventually I'd like to have tests that test EVERY URL of the site once all
- content is migrated. These tests only capture the 'main' portion of the page, ignoring the site wrapper (header and
-  footer)
-
-**WARNING** Do NOT run this on a content type if the Drupal site:
- * Does not load for any reason (ie 500): Fix any backend code issues that cause the page to break.
- * The <main> tag does not exist (templates not migrated yet): Migrate the templates before running.
- * The alias does not exist (ie 404): Find the appropriate piece of content in Drupal and set the alias.
-
-This will cause the report to either appear like it passed or it will skip pages.
+By default, the package comes with a command to retrieve the list of URLs from the XML Sitemap of an arbitrary domain.
 
 ## Where are the tests?
 
 They are located in `./cypress/e2e`.
 
+## Where are the logs?
+
+The results of `Cypress.log()` is sent to `./cypress/logs/log.txt`. This is handy to review after the tests have run.
+
+The log file also will log when an image 404s, you can populate the URLs into a text file by running `./find_missing_images_in_logs.sh` then reviewing `missing-images.txt`.
+
 ## Getting started
 
-This project assumes you have both projects running locally. **Both must be installed AND running.**
+Tested with Node 22
 
-Hugo: https://github.com/GSA/digitalgov.gov, npm i && npm start
-Drupal: https://github.com/GSA/digital-gov-drupal, ./robo.sh lando:init
+`npm install`
+
+This will give you all the [Cypress](https://www.cypress.io/) dependencies.
+
+Tested with PHP 8.3
+
+`composer install`
+
+This will get you all the [Robo](https://robo.li/) dependencies to run the following command.
+
+`vendor/bin/robo compare:get-sitemap https://wwww.mysite.com/sitemap.xml`
+
+This will save all the URLs found into `cypress/fixtures/urls.json`.
+
+> :bulb: You don't technically need to run this command, you just need to create the above file which is just a JSON array of absolute URLs that you can populate however you would like. The tests will run visual comparison on each URL. 
+
+You MUST see the configuration section below before you run the tests. These 3 settings will break your tests unless yours match exactly:
+
+* `.cookiesjsr-btn.important.allowAll` This clicks on the GDPR allow all button. You may want to do something similar or just comment it out.
+* `cy.get('header')` This completely hides the header because it was being absolutely positioned over the main content.
+* `const selector = 'main';` This is the element that will be screenshotted. Your tag may be different or you can comment it out.
+
+`npx cypress open`
+
+> :bulb: It's highly recommended that one runs this via the GUI instead of CLI so that the supplied mobile, desktop, and tablet resolution screenshots will be taken correctly. One should also fully expand the Cypress testing window.
+
+The `compare` test will go through every URL in `cypress/fixtures/urls.json` and get a baseline image. Running it again will compare this run to the previous run.
+
+Therefore the recommended workflow, is to put your site in an initial state, run the tests to get the baseline, then do the upgrades / changes to your site and run the tests again to compare against the baseline.
 
 ## Commands
-
-Everyone of these commands starts an HTTP server to view the report, ctrl+c in the terminal to end it and run the next
-command.
 
 There are many commands that are available:
 
 ```
-npm run compare-fresh
+npm run clear`
+```
+Clear all reports and the baseline images.
 
 ```
-This will create the baseline images for all content types, then compare Drupal against them.
-
-```
-npm run compare
-```
-Same as above, only the baseline are not regenerated. Must run the above first.
-
-```
-npm run authors-fresh
-npm run authors
-npm run landing-pages-fresh
-npm run landing-pages
-```
-There are commands like this for every content type, see package.json for the rest of them. They are the same as the
-above two commands except they only run for a single content type.
-
-However, I recommend getting all the screenshots from Hugo first with:
-
-```
-compare-baseline-against-hugo
+npm run generate-report
 ```
 
-You'll want to make sure there are no errors, that's just getting the baseline, you'll only get errors if the URL can't be found.
-
-Then, you can run the individual content type ones, fixing them as you go.
+Create a report based on the last run. Do this after your second run when you have a baseline to compare against.
 
 ```
-npm run authors-fresh
-npm run authors
-npm run landing-pages-fresh
-npm run landing-pages
-etc...
+npm run display-report
 ```
+
+Start a server with the report.
+
+## Configuration
+
+The test `./cypress/e2e/compare.cy.js` has a few places where you can modify it easily to suit your environment.
+
+Look for `// Loop through all of these resolutions.` if you want to take screenshots at different resolutions.
+
+Look for `// Wait until the page has loaded.` if you are having issues with the page not loading before the screenshot is taken.
+
+Look for `// Wait until all images have loaded.` if you are having issues with images.
+
+Look for `// Hide things that should not show.` if you want to do some interacting with the page to hide elements before the screenshot is taken.
+
+Look for `// Find the element you want to hide` if you want to hide some elements.
+
+Look for `// Only compare a portion of the page so that similar portions don't cause 100% errors.` if you want to only take a screenshot of the portion of the page that actually changes and ignore things like headers, footers, and sidebars.
+
+Look for `// If true, this will the name of the screenshot will be a combination of all the options that change how the screenshot is taken.` if you want to have very unique screenshot names.
+
+Look for `// Configuration the compareSnapshot command.` if you want to pass options to the visual regression software.
